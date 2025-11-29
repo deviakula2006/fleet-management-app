@@ -3,131 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Fleet Management</title>
+
     <style>
         body{
             margin:0;
             padding:0;
             background-color:white;
-
+            font-family: Arial;
         }
         .navbar{
-            padding:5px;
+            padding:10px;
             background-color: grey;
             display: flex;
             gap:20px;
             align-items: center;
         }
+        .container{
+            display:flex;
+        }
+        .sidebar{
+            width:25%;
+            padding:20px;
+            background:#eee;
+        }
+        .main-content{
+            width:75%;
+            padding:20px;
+        }
+        .card-grid{
+            display:grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap:20px;
+        }
+        .card{
+            background:white;
+            padding:10px;
+            border:1px solid #ccc;
+            border-radius:6px;
+        }
+        .status-Available{
+            color:green;
+            font-weight:bold;
+        }
+        .status-Unavailable{
+            color:red;
+            font-weight:bold;
+        }
+        button{
+            margin-top:5px;
+        }
     </style>
 </head>
+
 <body>
+
    <div class="navbar">
-    <label for="category-filter">category</label>
-    <select id="category-filter">
-        <option value="All">All</option>
-        <option value="Auto">Auto</option>
-        <option value="car">car</option>
-        <option value="truck">truckk</option>
-        <option value="bus">bus</option>
-    </select>
-    <label for="availability">Availability</label>
-    <select id = "availability">
-        <option value="All">All</option>
-          <option value="Available">Available</option>
+        <label for="category-filter">Category</label>
+        <select id="category-filter">
+            <option value="All">All</option>
+            <option value="Auto">Auto</option>
+            <option value="car">car</option>
+            <option value="truck">truck</option>
+            <option value="bus">bus</option>
+        </select>
+
+        <label for="availability">Availability</label>
+        <select id="availability">
+            <option value="All">All</option>
+            <option value="Available">Available</option>
             <option value="Unavailable">Unavailable</option>
-    </select>
-    <button id ="clear-filter">clear flter</button>
+        </select>
 
+        <button id="clear-filter">Clear Filter</button>
    </div>
-   <div class="container">
-           <div class="sidebar">
-            <h3>Add new Vechicle</h3>
-            <form id="fleet-form" class="fleet-form">
-                <label for ="regNo">Enter Reg no</label><br>
-                <input type="text" id ="regNo" required>
-                <label for="category">ENter category</label>
-                <select id="category" required>
-                    <option value ="">select category</option>
-               
-                 <option value="Auto">Auto</option>
-                 <option value="car">car</option>
-                 <option value="truck">truck</option>
-                 <option value="bus">bus</option>
-                </select>
-                <label for="drivename">enter driver name</label>
-                <input type="text"id = "drivername" required>
-                <label for="isavailable">Is Available</label>
-                <select id = "isavailable">
-                    <option value="available">Available</option>
-                      <option value="unavailable">Unavailable</option>
 
-                </select>
+   <div class="container">
+        <div class="sidebar">
+            <h3>Add New Vehicle</h3>
+            <form id="fleet-form">
+                <label>Reg No</label><br>
+                <input type="text" id="regNo" required><br><br>
+
+                <label>Category</label><br>
+                <select id="category" required>
+                    <option value="">Select category</option>
+                    <option value="Auto">Auto</option>
+                    <option value="car">car</option>
+                    <option value="truck">truck</option>
+                    <option value="bus">bus</option>
+                </select><br><br>
+
+                <label>Driver Name</label><br>
+                <input type="text" id="drivername" required><br><br>
+
+                <label>Availability</label><br>
+                <select id="isavailable">
+                    <option value="Available">Available</option>
+                    <option value="Unavailable">Unavailable</option>
+                </select><br><br>
+
                 <button type="submit">Add Fleet</button>
             </form>
-           </div>
-           <div class="main-content">
-            <h3>current fleet</h3>
-            <div id=""card-grid class="card-grid"></div>
-           </div>
+        </div>
+
+        <div class="main-content">
+            <h3>Current Fleet</h3>
+            <div id="card-grid" class="card-grid"></div>
+        </div>
    </div>
-   <script>
-    let fleet=[];
-    const imgurl='https://coding-platform.s3.amazonaws.com/dev/lms/tickets/5e80fcb6-3f8e-480c-945b-30a5359eb40e/JNmYjkVr3WOjsrbu.png';
-    const find_index=(regNo)=>fleet.findIndex(v=>v.regNo==regNo);
-    const createcard=(vechile)=>{
-        const avialabilitytext=vechile.isAvailable?'Available':'Unavailable';
-        const availabilityclass=vechile.isAvilable?'status-Available':'status-unaviable';
+
+<script>
+    let fleet = [];
+
+    const imageurl = "https://coding-platform.s3.amazonaws.com/dev/lms/tickets/5e80fcb6-3f8e-480c-945b-30a5359eb40e/JNmYjkVr3WOjsrbu.png";
+
+    const createCard = (v) => {
         return `
-        <div class="card" data-regno="${vechile.regNo}">
-            <img src="${imageurl}" alt="vechile">
-            <h4>${vchile.regNo}</h4>
-            <p>Driver:<strong>${vechile.category}</strong></p>
-            <p>Driver:<strong>${vechile.drivername}</strong></p>
-            <p>Status:<span class=${availablilityclass}">${availabilitytext}"</span></p>
-            <button onclick="updatedriver"('${vechile.regNo}')>update driver</button>
-                        <button onclick="changeavailability"('${vechile.regNo}')>Change Availability</button>
-                        <button onclick="deletevechile"('${vechile.regNo}')>deletevechile</button>
+            <div class="card" data-regno="${v.regNo}">
+                <img src="${imageurl}" width="100%" />
+                <h4>${v.regNo}</h4>
+                <p>Category: <strong>${v.category}</strong></p>
+                <p>Driver: <strong>${v.drivername}</strong></p>
+                <p>Status: <span class="status-${v.isavailable}">${v.isavailable}</span></p>
 
-            `;
-  </div>
+                <button onclick="updateDriver('${v.regNo}')">Update Driver</button><br>
+                <button onclick="changeAvailability('${v.regNo}')">Change Availability</button><br>
+                <button onclick="deleteVehicle('${v.regNo}')">Delete</button>
+            </div>
+        `;
     };
-    const render=(vechiletoRender)=>{
-        const cardGrid=document.getElementById('card-grid');
-        cardGrid.innerHTML=vechilesToRender.map(createCardHTML).join('');
-        
+
+    const render = () => {
+        const cardGrid = document.getElementById("card-grid");
+
+        let categoryFilter = document.getElementById("category-filter").value;
+        let availabilityFilter = document.getElementById("availability").value;
+
+        let filtered = fleet.filter(v => {
+            return (categoryFilter === "All" || v.category === categoryFilter) &&
+                   (availabilityFilter === "All" || v.isavailable === availabilityFilter);
+        });
+
+        cardGrid.innerHTML = filtered.map(createCard).join('');
     };
-    document.getElementById('fleet').addEventListener('submit',function(e)){
+
+    document.getElementById("fleet-form").addEventListener("submit", function(e){
         e.preventDefault();
-        const regNo=document.getElementById('regNo').value.trim();
-         const category=document.getElementById('category').value;
-          const drivername=document.getElementById('drivername').value.trim();
-    const isavialable=document.getElementById('isavailable').checked;
-    if(!regNo || !category || !driverName){
-        alert("all required feilds must be filled" );
-        return ;
 
-    }
-    const newVechile={
-        regNo,
-        category,drivername,
-        isavailable:isAvailable?'Available':'Unavailable'
-    }
-    render(fleet);
-    this.reset();
-    document.getElementById(('isavailable')).checked=true;
-    document.addEventListener('DOMConetentLoaded',()=>{
-        render(fleet);
+        let regNo = regNo.value.trim();
+        let category = category.value;
+        let drivername = drivername.value.trim();
+        let isavailable = isavailable.value;
+
+        if (!regNo || !category || !drivername) {
+            alert("All fields required");
+            return;
+        }
+
+        fleet.push({
+            regNo,
+            category,
+            drivername,
+            isavailable
+        });
+
+        this.reset();
+        render();
     });
-        }
-        const updatedriver=(regNo)=>{
-              const changeavailability=(regNo)=>{
-                  const deletevechile=(regNo)=>{
-                  }
-                }
-            
-            
-        }
 
-   </script>
+    // Update driver
+    function updateDriver(regNo) {
+        let newDriver = prompt("Enter new driver name:");
+        if (!newDriver) return;
+
+        let v = fleet.find(v => v.regNo === regNo);
+        v.drivername = newDriver;
+
+        render();
+    }
+
+    // Change status
+    function changeAvailability(regNo) {
+        let v = fleet.find(v => v.regNo === regNo);
+        v.isavailable = v.isavailable === "Available" ? "Unavailable" : "Available";
+        render();
+    }
+
+    // Delete
+    function deleteVehicle(regNo) {
+        fleet = fleet.filter(v => v.regNo !== regNo);
+        render();
+    }
+
+    // Filters
+    document.getElementById("category-filter").onchange = render;
+    document.getElementById("availability").onchange = render;
+
+    document.getElementById("clear-filter").onclick = () => {
+        document.getElementById("category-filter").value = "All";
+        document.getElementById("availability").value = "All";
+        render();
+    };
+
+    document.addEventListener("DOMContentLoaded", render);
+</script>
+
 </body>
 </html>
